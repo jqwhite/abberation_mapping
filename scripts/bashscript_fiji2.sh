@@ -17,11 +17,12 @@ module load cuda/10.0.130
 echo "Starting Fiji script"
 
 
-FIJI_MACRO_FILEPATH=$1
-PATCHES_FOLDER_PATH=$2
+IMAGEJ_BINARY=$1
+FIJI_MACRO_FILEPATH=$2
+PATCHES_FOLDER_PATH=$3
 echo ${FIJI_MACRO_FILEPATH}
 echo ${PATCHES_FOLDER_PATH}
 echo "Bashscript"
-/home/jwhite/fiji/Fiji.app/ImageJ-linux64 --headless -batch ${FIJI_MACRO_FILEPATH} ${PATCHES_FOLDER_PATH}
+${IMAGEJ_BINARY} --headless -batch ${FIJI_MACRO_FILEPATH} ${PATCHES_FOLDER_PATH}
 
 echo "Finishing Fiji script"
