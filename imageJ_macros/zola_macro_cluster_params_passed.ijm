@@ -8,6 +8,9 @@ parameters = split(args, ",");
 
 file_path = parameters[0];
 plugin_string = parameters[1];
+//  spaces are causing problems when passed to command line, so use "Q" as a spacer
+//  the > is also problematic, replace with R
+// unreplace space for "Q" and ">" for "R"
 plugin_parameters_with_spaces = replace(plugin_string, "Q", " ");
 plugin_parameters = replace(plugin_parameters_with_spaces, "R", ">");
 
