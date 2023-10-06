@@ -80,14 +80,15 @@ def setup_param_file(img_path, load_mode=False):
             old_params[key] = val
     return old_params
 
-def write_to_param_file(img_path, params):
+# def write_to_param_file(img_path, params):
+def write_to_param_file(parameter_filepath, params):
     '''
     write the used params to the params.json file
     img_path = String, params.json will be searched in the parent dir of img_path
     params = dict, parameter dictionary
     '''
-    params_file = f"{os.path.dirname(img_path)}/params.json"
-    with open(params_file, 'w') as fp:
+    # params_file = f"{os.path.dirname(img_path)}/params.json"
+    with open(parameter_filepath, 'w') as fp:
         json.dump(params, fp)
 
 def show_patch(pat):
