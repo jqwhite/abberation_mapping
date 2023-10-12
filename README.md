@@ -15,7 +15,7 @@ Excecute the notebooks in order:
 
 The `01_process_patches.ipynb` selects the beads, processes the patches around the beads, and runs a PSF model on each bead.
 
-**Logistics**
+**Logistics of `01_process_patches.ipynb`**
 
 The logistics of the `01_process_patches.ipynb` notebook are complicated.  
 
@@ -40,5 +40,6 @@ To process the beads, the notebook starts a number of batch jobs on gpu nodes of
 
 After the SLURM jobs are done running, there is a folder called `zola_raw` in the `patches_for_zola` folder on the remote.  For each bead, there is a `.json` file with the amplitudes of each Zernike mode, as a list, along with some metadata. 
 
+The `01_process_patches.ipynb` notebook concludes at this point, so you can run it top-to bottom and leave the jobs processing on the HPC.
 
 
