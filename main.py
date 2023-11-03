@@ -876,6 +876,8 @@ def create_abb_map(
 
     # create a touch matrix
     tm = cle.generate_touch_matrix(labeled_image)
+    print(f"touch matrix")
+    cle.imshow(tm)
 
     # save the map
     tifffile.imwrite(f"{save_dir}/label_map.tif", np.array(labeled_image))
@@ -893,28 +895,51 @@ def create_abb_map(
                 [[0], zola_list, [0]]
                 )  # adding the measurement of the end point and beginning for label index
         print(f"zola_list.shape: {zola_list.shape}")
+        print(f"zola_list type: {type(zola_list)}")
         print(f"zola_list: \n{zola_list}")
-        measurement = cle.push(np.asarray(np.expand_dims(np.expand_dims(zola_list, 0), 0)).T)
+        # measurement = cle.push(np.asarray(np.expand_dims(np.expand_dims(zola_list, 0), 0)).T)
+        measurement = cle.push(np.asarray(np.expand_dims(np.expand_dims(zola_list, 0), 0))) # transposing gave the wrong shape. Need (1,1,37) for below.
         print(f"measurement.shape: {measurement.shape}")
         print(f"measurement: \n{measurement}")
         print(f"measurement.ravel().shape: \n{measurement.ravel().shape}")
         print(f"measurement.ravel(): \n{measurement.ravel()}")
         print(f"labeled_image.shape:{labeled_image.shape}")
-        print(f"labeled_image:{labeled_image}")
+        # print(f"labeled_image:{labeled_image}")
         # [cle.imshow(slice) for slice in labeled_image[0::]]
         # [stackview.slice(labeled_image, slice_number=slice) for slice in labeled_image[0::]]
-        # # replace the vornoi with the measurements
+        # # replace the vornoi with the measurements (zernicke mode values)
         # parametric_image = cle.replace_intensities(labeled_image, measurement)
         # maxi_parametric_image = cle.replace_intensities(maxi_image, measurement)
         # maxi_parametric_image_points = cle.replace_intensities(labeled_pixel, measurement)
         parametric_image = cle.replace_intensities(labeled_image, measurement.ravel())
+        parametric_image = cle.replace_intensities(labeled_image, zola_list)
+        print(f"parametric_image:")
+        cle.imshow(parametric_image, colormap="seismic")
         maxi_parametric_image = cle.replace_intensities(maxi_image, measurement.ravel())
+        print(f"maxi_parametric_image:")
+        cle.imshow(maxi_parametric_image, colormap="seismic")
         maxi_parametric_image_points = cle.replace_intensities(labeled_pixel, measurement.ravel())
-
+        print(f"maxi_parametric_image_points:")
+        cle.imshow(maxi_parametric_image_points, colormap="seismic")
         # replace the vornoi with the median measurements of touching neighbors to remove noise
-        med_measurement = cle.mean_of_touching_neighbors(measurement, tm)
+        # med_measurement = cle.mean_of_touching_neighbors(measurement, tm)
+        med_measurement = cle.median_of_touching_neighbors(measurement, tm)
+        print("median measurement shape")
+        print(med_measurement.shape)
+        print("median measurement unique values:")
+        print(np.unique(cle.pull(med_measurement)))
+        neighbor_count = cle.count_touching_neighbors(tm)
+        print("neighbor_count shape")
+        print(neighbor_count.shape)
+        print("neighbor_count unique values")
+        print(np.unique(cle.pull(neighbor_count)))
+
+        local_mean_neighbor_count = cle.mean_of_touching_neighbors(neighbor_count, tm)
         # med_parametric_image = cle.replace_intensities(labeled_image, med_measurement)
-        med_parametric_image = cle.replace_intensities(labeled_image, med_measurement.ravel())
+        med_parametric_image = cle.replace_intensities(labeled_image, med_measurement)
+
+        print(f"med_parametric_image:")
+        cle.imshow(med_parametric_image, colormap="seismic")
 
         # rescale and masking
         show_image = np.array(parametric_image)
