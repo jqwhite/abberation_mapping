@@ -6,10 +6,16 @@ See https://en.wikipedia.org/wiki/Optical_aberration
 
 Based on Debayan Saha's Ph.D. thesis [ref].
 
-Excecute the notebooks in order:
+Requires ssh access and project space on falcon.
+
+Excecute the notebooks in order on a local machine:
 
 1. `01_process_patches.ipynb`
 2. `02_analyse_zola_results.ipynb`
+
+Processing happens as a slurm job on gpu nodes of the cluster.
+
+Analysis happens locally.  
 
 ## Further details
 
