@@ -15,7 +15,7 @@ Excecute the notebooks in order on a local machine:
 
 Processing happens as a slurm job on gpu nodes of the cluster.
 
-Analysis happens locally.  
+Analysis happens locally.  Currently (2023-11-07), final analyses are not copied back to the remote. 
 
 ## Further details
 
