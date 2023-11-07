@@ -42,7 +42,12 @@ After the SLURM jobs are done running, there is a folder called `zola_raw` in th
 
 The `01_process_patches.ipynb` notebook concludes at this point, so you can run it top-to bottom and leave the jobs processing on the HPC.
 
-## Notes on agreement between my notebooks and Debs, and the  `create_abb_map` function
+The `02_analyse_zola_results.ipyb` notebook copies the `zola_raw` folder from the remote server for local analysis.
+
+Todo: copy analysis to the remote server (falcon) so that local and remote copies match. 
+
+
+## Notes on agreement between my notebooks and Deb's, and the  `create_abb_map` function
 
 I was having trouble reproducing the results Andrea obtained using Deb's notebooks: the aberration maps looked different and the smoothed abberations maps were missing or did not correspond.
 
