@@ -760,17 +760,35 @@ def create_abb_map(
         img = tifffile.imread(img_path)
         masked_img = downscale_local_mean(img, scale_factor)
 
-    print(f"img.shape: {img.shape}")
-    print(f"masked_img.shape: {masked_img.shape}")
+    # print(f"img.shape: {img.shape}")
+    # print(f"masked_img.shape: {masked_img.shape}")
 
     # show and save the acce[ted points
+    print("Accepted points")
     fig = plt.figure()
     plt.imshow(np.max(masked_img, 0), cmap='rocket', clim=(np.percentile(masked_img, 3), np.percentile(masked_img, 97))) # not sure what this shows
     pos = np.array([np.divide(list(map(int, re.findall(r'\d+', n))), scale_factor) for n in zola_full.keys()])
     plt.plot(pos[:, 2], pos[:, 1], 'g.')
-    plt.suptitle(f"Accepted Points")
+    # plt.suptitle(f"Accepted Points")
     plt.show()
     plt.savefig(f"{save_dir}/accepted_points_in_image.png")
+
+    # # alternative less dependent on matplotlib:
+    # print("Accepted points")
+    # # Assuming masked_img is a pre-loaded 3D numpy array
+    # # Create the maximum intensity projection (MIP) along the first axis (Z-axis)
+    # mip = np.max(masked_img, axis=0)
+    # # Find the 3rd and 97th percentiles to use as intensity limits
+    # p3, p97 = np.percentile(masked_img, [3, 97])
+    # # Clip the MIP to the percentile bounds
+    # plot_array = np.clip(mip, p3, p97)
+    # # Optionally, rescale the clipped values to the full 0-1 range for display
+    # plot_array = (plot_array - p3) / (p97 - p3)
+    # # show using cle
+    # cle.imshow(plot_array)
+
+
+
 
     # # save the accepted points
     # #
@@ -823,23 +841,23 @@ def create_abb_map(
             )  # adding a point right at the end
     point_list[:, [0, 1, 2]] = point_list[:, [2, 1, 0]]  # changing x and z for pyclesperanto
 
-    print(f"point_list.shape: {point_list.shape}")
+    # print(f"point_list.shape: {point_list.shape}")
     # print(f"point_list: {point_list}")
     # print()
     point_list_T = point_list.T      # deb
-    print(f"point_list_T.shape: {point_list_T.shape}")
+    # print(f"point_list_T.shape: {point_list_T.shape}")
     # print(f"point_list_T: {point_list_T}")
 
 
     point_list_gpu =  cle.push(point_list)
-    print(f"point_list_gpu.shape:\n {point_list_gpu.shape}")
+    # print(f"point_list_gpu.shape:\n {point_list_gpu.shape}")
     # print(f"point_list_gpu:\n {point_list_gpu}")
     # doesn't work
     # labeled_pixel_jw = cle.pointlist_to_labelled_spots(point_list_gpu)
     # print(f"labeled_pixel_jw: \n{labeled_pixel_jw}")
 
     point_list_gpu_T =  cle.push(point_list_T)
-    print(f"point_list_gpu_T.shape: \n{point_list_gpu_T.shape}")
+    # print(f"point_list_gpu_T.shape: \n{point_list_gpu_T.shape}")
     # print(f"point_list_gpu_T: \n{point_list_gpu_T}")
     cle.pointlist_to_labelled_spots(point_list_gpu_T)
 
@@ -860,10 +878,10 @@ def create_abb_map(
     # labeled_pixel_jw = cle.pointlist_to_labelled_spots(cle.push(point_list))  # fixed
 
     labeled_pixel = cle.pointlist_to_labelled_spots(point_list_gpu_T)
-    # have a look:
-    print()
-    print(f"labeled_pixel:")
-    cle.imshow(labeled_pixel, colormap='Greys')
+    # # have a look:
+    # print()
+    # print(f"labeled_pixel:")
+    # cle.imshow(labeled_pixel, colormap='Greys')
     #
     # extend the label by vornoi
     labeled_image = cle.extend_labeling_via_voronoi(labeled_pixel)
@@ -887,23 +905,23 @@ def create_abb_map(
     [shutil.rmtree(f"{save_dir}/{i}/", ignore_errors=True) for i in dirs];
     [os.makedirs(f"{save_dir}/{i}/") for i in dirs];
 
-    # for a in abb_list:
-    for a in abb_list[0:1]:
+    for a in abb_list:
+    # for a in abb_list[0:1]:
         # measurements
         zola_list = np.array([_zo[str(a)] for _zo in zola_full.values()])
         zola_list = np.concatenate(
                 [[0], zola_list, [0]]
                 )  # adding the measurement of the end point and beginning for label index
-        print(f"zola_list.shape: {zola_list.shape}")
-        print(f"zola_list type: {type(zola_list)}")
-        print(f"zola_list: \n{zola_list}")
+        # print(f"zola_list.shape: {zola_list.shape}")
+        # print(f"zola_list type: {type(zola_list)}")
+        # print(f"zola_list: \n{zola_list}")
         # measurement = cle.push(np.asarray(np.expand_dims(np.expand_dims(zola_list, 0), 0)).T)
         measurement = cle.push(np.asarray(np.expand_dims(np.expand_dims(zola_list, 0), 0))) # transposing gave the wrong shape. Need (1,1,37) for below.
-        print(f"measurement.shape: {measurement.shape}")
-        print(f"measurement: \n{measurement}")
-        print(f"measurement.ravel().shape: \n{measurement.ravel().shape}")
-        print(f"measurement.ravel(): \n{measurement.ravel()}")
-        print(f"labeled_image.shape:{labeled_image.shape}")
+        # print(f"measurement.shape: {measurement.shape}")
+        # print(f"measurement: \n{measurement}")
+        # print(f"measurement.ravel().shape: \n{measurement.ravel().shape}")
+        # print(f"measurement.ravel(): \n{measurement.ravel()}")
+        # print(f"labeled_image.shape:{labeled_image.shape}")
         # print(f"labeled_image:{labeled_image}")
         # [cle.imshow(slice) for slice in labeled_image[0::]]
         # [stackview.slice(labeled_image, slice_number=slice) for slice in labeled_image[0::]]
@@ -913,33 +931,34 @@ def create_abb_map(
         # maxi_parametric_image_points = cle.replace_intensities(labeled_pixel, measurement)
         parametric_image = cle.replace_intensities(labeled_image, measurement.ravel())
         parametric_image = cle.replace_intensities(labeled_image, zola_list)
-        print(f"parametric_image:")
-        cle.imshow(parametric_image, colormap="seismic")
+        # print(f"parametric_image:")
+        # cle.imshow(parametric_image, colormap="seismic")
         maxi_parametric_image = cle.replace_intensities(maxi_image, measurement.ravel())
-        print(f"maxi_parametric_image:")
-        cle.imshow(maxi_parametric_image, colormap="seismic")
+        # print(f"maxi_parametric_image:")
+        # cle.imshow(maxi_parametric_image, colormap="seismic")
         maxi_parametric_image_points = cle.replace_intensities(labeled_pixel, measurement.ravel())
-        print(f"maxi_parametric_image_points:")
-        cle.imshow(maxi_parametric_image_points, colormap="seismic")
+        # print(f"maxi_parametric_image_points:")
+        # cle.imshow(maxi_parametric_image_points, colormap="seismic")
         # replace the vornoi with the median measurements of touching neighbors to remove noise
         # med_measurement = cle.mean_of_touching_neighbors(measurement, tm)
         med_measurement = cle.median_of_touching_neighbors(measurement, tm)
-        print("median measurement shape")
-        print(med_measurement.shape)
-        print("median measurement unique values:")
-        print(np.unique(cle.pull(med_measurement)))
-        neighbor_count = cle.count_touching_neighbors(tm)
-        print("neighbor_count shape")
-        print(neighbor_count.shape)
-        print("neighbor_count unique values")
-        print(np.unique(cle.pull(neighbor_count)))
+        # print("median measurement shape")
+        # print(med_measurement.shape)
+        # print("median measurement unique values:")
+        # print(np.unique(cle.pull(med_measurement)))
+        # print()
+        # neighbor_count = cle.count_touching_neighbors(tm)
+        # print("neighbor_count shape")
+        # print(neighbor_count.shape)
+        # print("neighbor_count unique values")
+        # print(np.unique(cle.pull(neighbor_count)))
 
-        local_mean_neighbor_count = cle.mean_of_touching_neighbors(neighbor_count, tm)
+        # local_mean_neighbor_count = cle.mean_of_touching_neighbors(neighbor_count, tm)
         # med_parametric_image = cle.replace_intensities(labeled_image, med_measurement)
         med_parametric_image = cle.replace_intensities(labeled_image, med_measurement)
 
-        print(f"med_parametric_image:")
-        cle.imshow(med_parametric_image, colormap="seismic")
+        # print(f"med_parametric_image:")
+        # cle.imshow(med_parametric_image, colormap="seismic")
 
         # rescale and masking
         show_image = np.array(parametric_image)
